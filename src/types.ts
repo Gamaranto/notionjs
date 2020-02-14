@@ -1,9 +1,11 @@
 enum NotionTableType {
   COLLECTION_VIEW = 'collection_view',
+  COLLECTION = 'collection',
+  LIST = 'list',
 }
 
 export interface RecordQuery {
-  ID: string;
+  id: string;
   table: NotionTableType;
 }
 
@@ -11,8 +13,12 @@ export interface GetRecordValuesInput {
   Requests: RecordQuery[];
 }
 
+export interface GetRecordValuesResponse {
+  Results: NotionRecord[];
+}
+
 type stack = {
-  ID: string;
+  id: string;
   Index: number;
   Table: string;
 };
@@ -20,22 +26,22 @@ type stack = {
 type cursor = { stack: stack[] };
 
 export interface LoadPageChunkInput {
-  pageID: string;
-  ChunkNumber: number;
-  Limit: number;
-  Cursor: cursor;
-  VerticalColumns: boolean;
+  pageId: string;
+  chunkNumber: number;
+  limit: number;
+  cursor: cursor;
+  verticalColumns: boolean;
 }
 
 export interface LoadPageChunkResponse {
-  RecordMap: RecordMap;
-  Cursor: cursor;
+  recordMap: RecordMap;
+  cursor: cursor;
 }
 
 export interface NotionRecord {
   Role: string;
   Value: JSON;
-  ID: string;
+  id: string;
   Table: string;
 
   Block: NotionBlock;
@@ -48,31 +54,31 @@ export interface NotionRecord {
 }
 
 export interface RecordMap {
-  Blocks: Map<string, NotionBlock>;
-  Spaces: Map<string, NotionSpace>;
-  Users: Map<string, NotionUser>;
-  Collections: Map<string, NotionCollection>;
-  CollectionViews: Map<string, NotionCollectionView>;
-  Comments: Map<string, NotionDiscussion>;
-  Discussions: Map<string, NotionDiscussion>;
+  block: Map<string, NotionBlock>;
+  space: Map<string, NotionSpace>;
+  notion_user: Map<string, NotionUser>;
+  collection: Map<string, NotionCollection>;
+  collectionView: Map<string, NotionCollectionView>;
+  comment: Map<string, NotionDiscussion>;
+  discussion: Map<string, NotionDiscussion>;
 }
 
 export interface NotionCollection {
-  ID: string;
+  id: string;
   Version: number;
-  ParentID: string;
+  ParentId: string;
   ParentTable: string;
   Alive: boolean;
   CopiedFrom: string;
 }
 
 export interface NotionCollectionView {
-  ID: string;
+  id: string;
   Version: number;
   Type: string;
   Format: FormatTable;
   Name: string;
-  ParentID: string;
+  ParentId: string;
   ParentTable: string;
   Query: NotionQuery;
   Alive: boolean;
@@ -80,33 +86,33 @@ export interface NotionCollectionView {
 }
 
 export interface NotionBlock {
-  ID: string;
+  id: string;
   Alive: boolean;
-  ContentIDs: string[];
+  ContentIds: string[];
   CopiedFrom: string;
   // Needed for BlockCollectionView
-  CollectionID: string;
+  CollectionId: string;
   CreatedTime: number;
-  DiscussionIDs: string[];
+  DiscussionIds: string[];
   // those ids seem to map to storage in s3
   // https://s3-us-west-2.amazonaws.com/secure.notion-static.com/${id}/${name}
-  FileIDs: string[];
-  // ID of the user that created the block
+  FileIds: string[];
+  // id of the user that created the block
   CreatedBy: string;
-  //ID of the user that last edited the block
+  //id of the user that last edited the block
   LastEditedBy: string;
   LastEditedTime: number;
-  Permissions?: Permission[];
+  //Permissions?: Permission[];
   // type of the block
   BlockType: string;
   // Blocks are versioned
   Version: number;
   // for BlockCollectionView
-  ViewIDs: string[];
+  ViewIds: string[];
 
   // Parent Block
-  // Parent block ID
-  ParentID: string;
+  // Parent block id
+  ParentId: string;
   ParentTable: string;
   Parent: NotionBlock;
 
@@ -138,13 +144,13 @@ export interface NotionBlock {
   EmbeddedCode: string;
   CodeLanguage: string;
 
-  // For BlockCollectionView there can be multiple views that correspond to ViewIDs
-  TableViews: NotionTableView[];
+  // For BlockCollectionView there can be multiple views that correspond to ViewIds
+  // TableViews: NotionTableView[];
   NotionPage: NotionPage;
 }
 
 export interface NotionPage {
-  ID: string;
+  id: string;
   BlockRecords: NotionRecord[];
   UserRecords: NotionRecord[];
   CollectionRecords: NotionRecord[];
@@ -156,7 +162,7 @@ export interface NotionPage {
 }
 
 export interface NotionSpace {
-  ID: string;
+  id: string;
   Version: number;
   Name: string;
   Domain: string;
@@ -179,20 +185,20 @@ export interface NotionSpace {
 export interface NotionSpacePermissions {
   Role: string;
   Type: string;
-  UserID: string;
+  UserId: string;
 }
 
 export interface NotionSpacePermissionGroups {
-  ID: string;
+  id: string;
   Name: string;
-  UserIDs: string[];
+  UserIds: string[];
 }
 
 export interface NotionUser {
   Email: string;
   FamilyName: string;
   GivenName: string;
-  ID: string;
+  id: string;
   Locale: string;
   MobileOnboardingCompleted: boolean;
   OnboardingCompleted: boolean;
@@ -203,10 +209,10 @@ export interface NotionUser {
 }
 
 export interface NotionComment {
-  ID: string;
+  id: string;
   Version: number;
   Alive: boolean;
-  ParentID: string;
+  ParentId: string;
   ParentTable: string;
   CreatedBy: string;
   CreatedTime: number;
@@ -215,9 +221,9 @@ export interface NotionComment {
 }
 
 export interface NotionDiscussion {
-  ID: string;
+  id: string;
   Version: number;
-  ParentID: string;
+  ParentId: string;
   ParentTable: string;
   Resolved: boolean;
   Comments: string[];
@@ -231,7 +237,7 @@ enum OperationCommands {
 }
 
 export interface NotionOperation {
-  ID: string;
+  id: string;
   Table: string;
   Path: string[];
   Command: OperationCommands;
@@ -253,13 +259,13 @@ export interface getUploadFileUrlResponse {
   URL: string | URL;
   SignedGetURL: string | URL;
   SignedPutURL: string | URL;
-  FileID: string;
+  FileId: string;
 }
 
 // API endpoint loadUserContent
 
 export interface loadUserContentResponse {
-  ID: string;
+  id: string;
   Table: string;
   Role: string;
   Value: JSON;
@@ -270,16 +276,16 @@ export interface loadUserContentResponse {
 }
 
 export interface SubscriptionDataSpaceUsers {
-  UserID: string;
+  UserId: string;
   Role: string;
   IsGuest: boolean;
-  GuestPageIDs: object[];
+  GuestPageIds: object[];
 }
 
 export interface SubscriptionDataSpaceCredits {
-  ID: string;
+  id: string;
   Version: number;
-  UserID: string;
+  UserId: string;
   Amount: number;
   Activated: boolean;
   CreatedTimestamp: string;
@@ -304,11 +310,11 @@ export interface SubscriptionData {
   TotalCredit: number;
   AvailableCredit: number;
   CreditEnabled: boolean;
-  CustomerID: string;
+  CustomerId: string;
   CustomerName: string;
-  VatID: string;
+  VatId: string;
   IsDelinquent: boolean;
-  ProductID: string;
+  ProductId: string;
   BillingEmail: string;
   Plan: string;
   PlanAmount: number;
@@ -399,7 +405,7 @@ export interface ColumnSchema {
   TargetPropertyType: string;
 
   // for Type ColumnTypeRelation
-  CollectionID: string;
+  CollectionId: string;
   Property: string;
   // for Type ColumnTypeFormula
   Formula: ColumnFormula;
@@ -408,7 +414,7 @@ export interface ColumnSchema {
 
 export interface CollectionColumnOption {
   Color: string;
-  ID: string;
+  id: string;
   Value: string;
 }
 
@@ -439,21 +445,21 @@ export interface NotionQuery {
 
 export interface AggregateQuery {
   AggregationType: string;
-  ID: string;
+  id: string;
   Property: string;
   Type: string;
   ViewType: string;
 }
 
 export interface QuerySort {
-  ID: string;
+  id: string;
   Direction: string;
   Property: string;
   Type: string;
 }
 
 export interface QueryFilter {
-  ID: string;
+  id: string;
   Comparator: string;
   Property: string;
   Type: string;
@@ -470,20 +476,20 @@ export interface Loader {
 
 // /api/v3/queryCollection request
 export interface queryCollectionInput {
-  CollectionID: string;
-  CollectionViewID: string;
+  CollectionId: string;
+  CollectionViewId: string;
   Query: NotionQuery;
   Loader: Loader;
 }
 
 export interface AggregationResult {
-  ID: string;
+  id: string;
   Value: number;
 }
 
 export interface queryCollectionResult {
   type: string;
-  BlockIDs: string[];
+  BlockIds: string[];
   AggregationResults: AggregationResult[];
   Total: number;
 }
