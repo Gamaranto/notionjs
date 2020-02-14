@@ -2,12 +2,37 @@ enum NotionTableType {
   COLLECTION_VIEW = 'collection_view',
 }
 
-interface NotionRecordQuery {
+export interface RecordQuery {
   ID: string;
   table: NotionTableType;
 }
 
-interface NotionRecord {
+export interface GetRecordValuesInput {
+  Requests: RecordQuery[];
+}
+
+type stack = {
+  ID: string;
+  Index: number;
+  Table: string;
+};
+
+type cursor = { stack: stack[] };
+
+export interface LoadPageChunkInput {
+  pageID: string;
+  ChunkNumber: number;
+  Limit: number;
+  Cursor: cursor;
+  VerticalColumns: boolean;
+}
+
+export interface LoadPageChunkResponse {
+  RecordMap: RecordMap;
+  Cursor: cursor;
+}
+
+export interface NotionRecord {
   Role: string;
   Value: JSON;
   ID: string;
@@ -22,7 +47,17 @@ interface NotionRecord {
   Discussion: NotionDiscussion;
 }
 
-interface NotionCollection {
+export interface RecordMap {
+  Blocks: Map<string, NotionBlock>;
+  Spaces: Map<string, NotionSpace>;
+  Users: Map<string, NotionUser>;
+  Collections: Map<string, NotionCollection>;
+  CollectionViews: Map<string, NotionCollectionView>;
+  Comments: Map<string, NotionDiscussion>;
+  Discussions: Map<string, NotionDiscussion>;
+}
+
+export interface NotionCollection {
   ID: string;
   Version: number;
   ParentID: string;
@@ -31,7 +66,7 @@ interface NotionCollection {
   CopiedFrom: string;
 }
 
-interface NotionCollectionView {
+export interface NotionCollectionView {
   ID: string;
   Version: number;
   Type: string;
@@ -44,7 +79,7 @@ interface NotionCollectionView {
   PageSort: string[];
 }
 
-interface NotionBlock {
+export interface NotionBlock {
   ID: string;
   Alive: boolean;
   ContentIDs: string[];
@@ -108,7 +143,7 @@ interface NotionBlock {
   NotionPage: NotionPage;
 }
 
-interface NotionPage {
+export interface NotionPage {
   ID: string;
   BlockRecords: NotionRecord[];
   UserRecords: NotionRecord[];
@@ -120,7 +155,7 @@ interface NotionPage {
   TableViews: TableView[];
 }
 
-interface NotionSpace {
+export interface NotionSpace {
   ID: string;
   Version: number;
   Name: string;
@@ -141,19 +176,19 @@ interface NotionSpace {
   LastEditedTime: number;
 }
 
-interface NotionSpacePermissions {
+export interface NotionSpacePermissions {
   Role: string;
   Type: string;
   UserID: string;
 }
 
-interface NotionSpacePermissionGroups {
+export interface NotionSpacePermissionGroups {
   ID: string;
   Name: string;
   UserIDs: string[];
 }
 
-interface NotionUser {
+export interface NotionUser {
   Email: string;
   FamilyName: string;
   GivenName: string;
@@ -167,7 +202,7 @@ interface NotionUser {
   Version: number;
 }
 
-interface NotionComment {
+export interface NotionComment {
   ID: string;
   Version: number;
   Alive: boolean;
@@ -179,7 +214,7 @@ interface NotionComment {
   LastEditedTime: number;
 }
 
-interface NotionDiscussion {
+export interface NotionDiscussion {
   ID: string;
   Version: number;
   ParentID: string;
@@ -188,95 +223,142 @@ interface NotionDiscussion {
   Comments: string[];
 }
 
-// ***** All Block Types here
+enum OperationCommands {
+  CommandSet = 'set',
+  CommandUpdate = 'update',
+  CommandListAfter = 'listAfter',
+  CommandListRemove = 'listRemove',
+}
 
-// BlockAudio is audio embed (e.g. an mp3 file)
-type BlockAudio = 'audio';
-// BlockBookmark is a bookmark block
-type BlockBookmark = 'bookmark';
-// BlockBreadcrumb is breadcrumb block
-type BlockBreadcrumb = 'breadcrumb';
-// BlockBulletedList is a bulleted list block
-type BlockBulletedList = 'bulleted_list';
-// BlockCode is a code block
-type BlockCode = 'code';
-// BlockCodepen is embedded codepen block
-type BlockCodepen = 'codepen';
-// BlockCallout is a callout
-type BlockCallout = 'callout';
-// BlockColumn is a child of TypeColumnList
-type BlockColumn = 'column';
-// BlockColumnList is for multi-column. Number of columns is
-// number of content blocks of type TypeColumn
-type BlockColumnList = 'column_list';
-// BlockCollectionView is a collection view block for inline collections
-type BlockCollectionView = 'collection_view';
-// BlockCollectionViewPage is a page that is a collection
-type BlockCollectionViewPage = 'collection_view_page';
-// BlockComment is a comment block
-type BlockComment = 'comment';
-// BlockDivider is a divider block
-type BlockDivider = 'divider';
-// BlockDrive is embedded Google Drive file
-type BlockDrive = 'drive';
-// BlockEmbed is a generic oembed link
-type BlockEmbed = 'embed';
-// BlockEquation is TeX equation block
-type BlockEquation = 'equation';
-// BlockFactory represents a factory block
-type BlockFactory = 'factory';
-// BlockFigma represents figma embed
-type BlockFigma = 'figma';
-// BlockFile is an embedded file
-type BlockFile = 'file';
-// BlockGist is embedded gist block
-type BlockGist = 'gist';
-// BlockHeader is a header block
-type BlockHeader = 'header';
-// BlockImage is an image block
-type BlockImage = 'image';
-// BlockMaps is embedded Google Map block
-type BlockMaps = 'maps';
-// BlockNumberedList is a numbered list block
-type BlockNumberedList = 'numbered_list';
-// BlockPDF is an embedded pdf file
-type BlockPDF = 'pdf';
-// BlockPage is a notion Page
-type BlockPage = 'page';
-// BlockQuote is a quote block
-type BlockQuote = 'quote';
-// BlockSubHeader is a header block
-type BlockSubHeader = 'sub_header';
-// BlockSubSubHeader
-type BlockSubSubHeader = 'sub_sub_header';
-// BlockTableOfContents is table of contents
-type BlockTableOfContents = 'table_of_contents';
-// BlockText is a text block
-type BlockText = 'text';
-// BlockTodo is a todo block
-type BlockTodo = 'to_do';
-// BlockToggle is a toggle block
-type BlockToggle = 'toggle';
-// BlockTweet is embedded gist block
-type BlockTweet = 'tweet';
-// BlockVideo is youtube video embed
-type BlockVideo = 'video';
+export interface NotionOperation {
+  ID: string;
+  Table: string;
+  Path: string[];
+  Command: OperationCommands;
+  Args: object;
+}
+
+export interface submitTransactionInput {
+  Operations: NotionOperation[];
+}
+
+//API endpoint getUploadFileUrl
+export interface getUploadFileUrlInput {
+  Bucket: string;
+  ContentType: string;
+  Name: string;
+}
+
+export interface getUploadFileUrlResponse {
+  URL: string | URL;
+  SignedGetURL: string | URL;
+  SignedPutURL: string | URL;
+  FileID: string;
+}
+
+// API endpoint loadUserContent
+
+export interface loadUserContentResponse {
+  ID: string;
+  Table: string;
+  Role: string;
+  Value: JSON;
+
+  Block: NotionBlock;
+  Space: NotionSpace;
+  User: NotionUser;
+}
+
+export interface SubscriptionDataSpaceUsers {
+  UserID: string;
+  Role: string;
+  IsGuest: boolean;
+  GuestPageIDs: object[];
+}
+
+export interface SubscriptionDataSpaceCredits {
+  ID: string;
+  Version: number;
+  UserID: string;
+  Amount: number;
+  Activated: boolean;
+  CreatedTimestamp: string;
+  Type: string;
+}
+
+export interface SubscriptionDataAddress {
+  Name: string;
+  BusinessName: string;
+  AddressLine1: string;
+  AddressLine2: string;
+  ZipCode: string;
+  City: string;
+  State: string;
+  Country: string;
+}
+
+export interface SubscriptionData {
+  Type: string;
+  SpaceUsers: SubscriptionDataSpaceUsers[];
+  Credits: SubscriptionDataSpaceCredits[];
+  TotalCredit: number;
+  AvailableCredit: number;
+  CreditEnabled: boolean;
+  CustomerID: string;
+  CustomerName: string;
+  VatID: string;
+  IsDelinquent: boolean;
+  ProductID: string;
+  BillingEmail: string;
+  Plan: string;
+  PlanAmount: number;
+  AccountBalance: number;
+  MonthlyPlanAmount: number;
+  YearlyPlanAmount: number;
+  Quantity: number;
+  Billing: string;
+  Address: SubscriptionDataAddress;
+  Last4: string;
+  Brand: string;
+  Interval: string;
+  Created: number;
+  PeriodEnd: number;
+  NextInvoiceTime: number;
+  IsPaid: boolean;
+  Members: object[];
+}
+
+export interface getSignedFileUrlsInput {
+  Urls: string[] | URL[];
+}
+
+export interface getSignedFileUrlsResponse {
+  SignedUrls: string[];
+}
+
+export interface DownloadFileResponse {
+  URL: string | URL;
+  CacheFileName: string;
+  Data: ArrayBuffer[];
+}
+
+// ***** All Block Types here
 
 // Table Types
 
-interface FormatTable {
+export interface FormatTable {
   PageSort: string;
   TableWrap: boolean;
   TableProperties: TableProperty[];
 }
 
-interface TableProperty {
+export interface TableProperty {
   Width: number;
   Visible: boolean;
   Property: string;
 }
 
-interface TableView {
+export interface TableView {
   Page: NotionPage;
   CollectionView: NotionCollectionView;
   Collection: NotionCollection;
@@ -284,22 +366,29 @@ interface TableView {
   Rows: TableRow[];
 }
 
-interface TableRow {
+export interface TableRow {
   TableView: TableView;
   Page: NotionBlock;
   Columns: TextSpan[][];
 }
 
+export interface TextSpan {
+  Text: string;
+  Attrs: TextAttr[];
+}
+
+type TextAttr = string[];
+
 // ColumnInfo describes a schema for a given column
 
-interface ColumnInfo {
+export interface ColumnInfo {
   TableView: TableView;
   Index: number;
   Schema: ColumnSchema;
   Property: TableProperty;
 }
 
-interface ColumnSchema {
+export interface ColumnSchema {
   Name: string;
   ColumnType: string;
   NumberFormat: string;
@@ -317,13 +406,13 @@ interface ColumnSchema {
   ColumnOptions: CollectionColumnOption[];
 }
 
-interface CollectionColumnOption {
+export interface CollectionColumnOption {
   Color: string;
   ID: string;
   Value: string;
 }
 
-interface FormulaArgument {
+export interface FormulaArgument {
   Name: string;
   ResultType: string;
   FormulaType: string;
@@ -331,10 +420,75 @@ interface FormulaArgument {
   ValueType: string;
 }
 
-interface ColumnFormula {
+export interface ColumnFormula {
   Arguments: FormulaArgument[];
   Name: string;
   Operator: string;
   ResultType: string;
   Type: string;
+}
+
+export interface NotionQuery {
+  Aggregate: AggregateQuery[];
+  GroupBy: object;
+  CalendarBy: object;
+  FilterOperator: string;
+  Filter: QueryFilter[];
+  Sort: QuerySort[];
+}
+
+export interface AggregateQuery {
+  AggregationType: string;
+  ID: string;
+  Property: string;
+  Type: string;
+  ViewType: string;
+}
+
+export interface QuerySort {
+  ID: string;
+  Direction: string;
+  Property: string;
+  Type: string;
+}
+
+export interface QueryFilter {
+  ID: string;
+  Comparator: string;
+  Property: string;
+  Type: string;
+  Value: string;
+}
+
+export interface Loader {
+  type: string;
+  Limit: number; //default is 70
+  UserTimeZone: string;
+  UserLocale: string;
+  LoadContentCover: boolean;
+}
+
+// /api/v3/queryCollection request
+export interface queryCollectionInput {
+  CollectionID: string;
+  CollectionViewID: string;
+  Query: NotionQuery;
+  Loader: Loader;
+}
+
+export interface AggregationResult {
+  ID: string;
+  Value: number;
+}
+
+export interface queryCollectionResult {
+  type: string;
+  BlockIDs: string[];
+  AggregationResults: AggregationResult[];
+  Total: number;
+}
+
+export interface queryCollectionResponse {
+  RecordMap: RecordMap;
+  Result: queryCollectionResult;
 }

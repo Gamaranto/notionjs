@@ -33,12 +33,18 @@ function toNoDash(id: string) {
   return id.replace(/-/g, '');
 }
 
-function idFromUrl(url: string, { withDash = true } = {}) {
+function idFromUrl(
+  url: string,
+  { withDash = true }: { [k: string]: boolean } = {}
+) {
   var id = url.slice(-32);
   return withDash ? toDash(id) : toNoDash(id);
 }
 
-function extractID(urlOrID: string, { withDash = true } = {}) {
+function extractID(
+  urlOrID: string,
+  { withDash = true }: { [k: string]: boolean } = {}
+) {
   if (hasDash(urlOrID) || hasNoDash(urlOrID)) {
     return withDash ? toDash(urlOrID) : toNoDash(urlOrID);
   }
