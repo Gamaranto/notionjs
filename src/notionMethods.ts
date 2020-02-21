@@ -23,7 +23,7 @@ async function getRecordValues(...records: RecordQuery[]) {
 async function loadPageChunk(pageId: string, options = defaultData) {
   let requestData: LoadPageChunkInput = { pageId, ...options };
   let data = await post<LoadPageChunkResponse>('loadPageChunk')(requestData);
-  return data;
+  return data.body;
 }
 
 export { loadPageChunk, getRecordValues };

@@ -1,7 +1,10 @@
-enum NotionTableType {
-  COLLECTION_VIEW = 'collection_view',
-  COLLECTION = 'collection',
-  LIST = 'list',
+export enum NotionTableType {
+  collection_view = 'collection_view',
+  collection = 'collection',
+  list = 'list',
+  block = 'block',
+  space = 'space',
+  notion_user = 'notion_user',
 }
 
 export interface RecordQuery {
@@ -195,17 +198,17 @@ export interface NotionSpacePermissionGroups {
 }
 
 export interface NotionUser {
-  Email: string;
-  FamilyName: string;
-  GivenName: string;
+  email: string;
+  familyName: string;
+  givenName: string;
   id: string;
-  Locale: string;
-  MobileOnboardingCompleted: boolean;
-  OnboardingCompleted: boolean;
-  ClipperOnboardingCompleted: boolean;
-  ProfilePhoto: string;
-  TimeZone: string;
-  Version: number;
+  locale: string;
+  mobileOnboardingCompleted: boolean;
+  onboardingCompleted: boolean;
+  clipperOnboardingCompleted: boolean;
+  profilePhoto: string;
+  timeZone: string;
+  version: number;
 }
 
 export interface NotionComment {
