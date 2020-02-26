@@ -1,27 +1,38 @@
-# TSDX Bootstrap
+# Notion.js
 
-This project was bootstrapped with [TSDX](https://github.com/jaredpalmer/tsdx).
+Notion.js is an unofficial client for the Notion API, entirely written in TypeScript, it empowers you
 
-## Local Development
+## Getting Started
 
-Below is a list of commands you will probably find useful.
+Run `yarn add notionjs` or `npm install notionjs`
 
-### `npm start` or `yarn start`
+```javascript
+import Notion from 'notionjs';
 
-Runs the project in development/watch mode. Your project will be rebuilt upon changes. TSDX has a special logger for you convenience. Error messages are pretty printed and formatted for compatibility VS Code's Problems tab.
+let notion = new Notion(process.env.TOKEN_V2);
 
-<img src="https://user-images.githubusercontent.com/4060187/52168303-574d3a00-26f6-11e9-9f3b-71dbec9ebfcb.gif" width="600" />
+// Downloads the page
+notion.getPage('https://notion.so/some-id');
 
-Your library will be rebuilt if you make edits.
+// Get a specific block, user, collection, collectionView or Space
+notion.getUser('someUserId');
+notion.getCollection('someSpaceId');
+notion.getCollectionView('someViewID');
+notion.getBlock('someBlockId');
+notion.getSpace('someSpaceId');
+```
 
-### `npm run build` or `yarn build`
+You can find the Notion Id in the URL of the page and the notion client will take care of parsing that into a valid ID.
 
-Bundles the package to the `dist` folder.
-The package is optimized and bundled with Rollup into multiple formats (CommonJS, UMD, and ES Module).
+## Contributing
 
-<img src="https://user-images.githubusercontent.com/4060187/52168322-a98e5b00-26f6-11e9-8cf6-222d716b75ef.gif" width="600" />
+All contributions are welcome! This is a WIP, so any help is a much appreciated :)
 
-### `npm test` or `yarn test`
+## Work in progress
 
-Runs the test watcher (Jest) in an interactive mode.
-By default, runs tests related to files changed since the last commit.
+Those are features that I plan to add in the near future.
+
+- Caching
+- 2-Way Transactions
+- HTML and MD parsers
+- Custom Routes
