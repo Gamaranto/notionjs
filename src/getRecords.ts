@@ -6,11 +6,18 @@ import {
   NotionTableType,
 } from 'types';
 
-export { getBlock, getCollection, getCollectionView, getSpace, getUser };
+export {
+  getBlock,
+  getCollection,
+  getCollectionView,
+  getSpace,
+  getUser,
+  getPage,
+};
 
 // ****************************
 
-function getRecord({
+async function getRecord({
   table,
   id,
 }: {
@@ -69,4 +76,17 @@ async function getCollectionView(viewUrlOrId: string) {
       id: extractID(viewID),
     });
   }
+}
+
+async function getPage(idOrUrl: string) {
+  let pageId = extractID(idOrUrl);
+  let rootBlock = await getPageRootBlock(pageId);
+
+  return rootBlock;
+}
+
+// ************************
+
+async function getPageRootBlock(pageId: string) {
+  return await getBlock(pageId);
 }

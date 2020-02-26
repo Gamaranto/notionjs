@@ -1,3 +1,11 @@
+export type Unwrapped<T> = T extends Promise<infer U>
+  ? U
+  : T extends (...args: any) => Promise<infer U>
+  ? U
+  : T extends (...args: any) => infer U
+  ? U
+  : T;
+
 export enum NotionTableType {
   collection_view = 'collection_view',
   collection = 'collection',
@@ -5,6 +13,15 @@ export enum NotionTableType {
   block = 'block',
   space = 'space',
   notion_user = 'notion_user',
+}
+
+export interface Client {
+  getPage: getPage;
+  getBlock: getBlock;
+  getSpace: getSpace;
+  getUser: getUser;
+  getCollection: getCollection;
+  getCollectionView: getCollectionView;
 }
 
 export interface RecordQuery {
@@ -501,3 +518,12 @@ export interface queryCollectionResponse {
   RecordMap: RecordMap;
   Result: queryCollectionResult;
 }
+
+type getBlock = (urlOrID: string) => Promise<NotionBlock | Error>;
+type getCollectionView = (
+  urlOrID: string
+) => Promise<NotionCollectionView | Error>;
+type getCollection = (urlOrID: string) => Promise<NotionCollection | Error>;
+type getUser = (urlOrID: string) => Promise<NotionUser | Error>;
+type getSpace = (urlOrID: string) => Promise<NotionSpace | Error>;
+type getPage = (urlOrID: string) => Promise<NotionPage | Error>;

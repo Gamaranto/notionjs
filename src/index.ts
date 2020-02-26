@@ -1,13 +1,19 @@
-import { loadPageChunk } from './notionMethods';
-import extractId from './extractId';
+// import {
+//   getBlock,
+//   getCollection,
+//   getSpace,
+//   getCollectionView,
+//   getUser,
+//   getPage,
+// } from './getRecords';
 
-// getRecordValues({
-//   table: 'COLLECTION_VIEW',
-//   id: 'a98d6f17-d09e-4742-afac-a6019bd3f2cf',
-// })
-// .then(console.log)
-// .catch(console.error);
+export class Notion {
+  private tokenv2 = process.env.TOKEN_V2;
 
-loadPageChunk(extractId('bbee5f03640f412eb0ae57d96a5252ab'))
-  .then(console.log)
-  .catch(console.error);
+  readToken() {
+    console.log(this.tokenv2);
+  }
+}
+
+let notion = new Notion();
+notion.readToken();
