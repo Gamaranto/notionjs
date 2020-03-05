@@ -22,7 +22,6 @@ let notionClient = got.extend(defaultOptions);
 
 function post<T = string>(url: string) {
   return async function(options: object = {}) {
-    console.log(options);
     let userPayload = { json: options };
     let userNotionClient = notionClient.extend(userPayload);
     return userNotionClient<T>(url);

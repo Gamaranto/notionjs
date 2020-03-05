@@ -23,7 +23,7 @@ async function getRecord({
 }: {
   table: NotionTableType;
   id: string;
-}): Promise<LoadPageChunkResponse | GetRecordValuesResponse> {
+}) {
   if (table == 'block') {
     return loadPageChunk(id);
   } else {
